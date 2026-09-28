@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { buildSwapTx, buildExactOutputSwapTx, toRawAmount, toStellarAddress } from '@swyft/sdk';
 import type { SwapQuote, ExactOutputQuote } from '@swyft/sdk';
 import type { Token } from '@swyft/ui';
-import { API_BASE, ROUTER_ADDRESS } from '@/lib/constants';
+import { ROUTER_ADDRESS, getApiBase, getNetworkPassphrase } from '@/lib/constants';
+import { useNetworkContext } from '@/context/NetworkContext';
 import { useWalletContext } from '@/context/WalletContext';
 import { useTransactionStatus } from '@/context/TransactionStatusContext';
 import { submitTransaction, MevSubmissionError } from '@/lib/mev-submission';
@@ -127,7 +128,7 @@ export function useSwapExecution() {
       try {
         const { hash } = await submitTransaction({
           signedXdr,
-          apiBase: API_BASE,
+          apiBase: getApiBase(network),
           mevEnabled,
           mevRpcUrl,
         });
@@ -206,7 +207,7 @@ export function useSwapExecution() {
       try {
         const { hash } = await submitTransaction({
           signedXdr,
-          apiBase: API_BASE,
+          apiBase: getApiBase(network),
           mevEnabled,
           mevRpcUrl,
         });
