@@ -178,7 +178,7 @@ describe('useSwapExecution — exact-input signing and submission', () => {
     expect(result.current.txHash).toBe('hash2');
   });
 
-  it('silently returns to idle when the wallet rejects the signature (no signedTxXdr)', async () => {
+  it('shows an explicit rejection when the wallet returns no signed transaction', async () => {
     mockSignTransaction.mockResolvedValue({ notSigned: true });
 
     const { result } = renderHook(() => useSwapExecution());
@@ -194,11 +194,13 @@ describe('useSwapExecution — exact-input signing and submission', () => {
       });
     });
 
-    expect(result.current.status).toBe('idle');
+    expect(result.current.status).toBe('error');
+    expect(result.current.error).toBe('rejected');
+    expect(result.current.detail).toContain('Nothing was submitted');
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it('sets status to idle when signing throws a rejection-style error', async () => {
+  it('shows an explicit rejection when signing throws a rejection-style error', async () => {
     mockSignTransaction.mockRejectedValue(new Error('User rejected access'));
 
     const { result } = renderHook(() => useSwapExecution());
@@ -214,8 +216,9 @@ describe('useSwapExecution — exact-input signing and submission', () => {
       });
     });
 
-    expect(result.current.status).toBe('idle');
-    expect(result.current.error).toBeNull();
+    expect(result.current.status).toBe('error');
+    expect(result.current.error).toBe('rejected');
+    expect(result.current.detail).toContain('Nothing was submitted');
   });
 
   it('surfaces a network error when signing throws a non-rejection error', async () => {
