@@ -5,7 +5,6 @@ import { buildSwapTx, buildExactOutputSwapTx, toRawAmount, toStellarAddress } fr
 import type { SwapQuote, ExactOutputQuote } from '@swyft/sdk';
 import type { Token } from '@swyft/ui';
 import { API_BASE, ROUTER_ADDRESS } from '@/lib/constants';
-import { useNetworkContext } from '@/context/NetworkContext';
 import { useWalletContext } from '@/context/WalletContext';
 import { useTransactionStatus } from '@/context/TransactionStatusContext';
 import { submitTransaction, MevSubmissionError } from '@/lib/mev-submission';
@@ -50,7 +49,6 @@ const ERROR_MESSAGES: Record<Exclude<SwapError, null>, string> = {
 };
 
 export function useSwapExecution() {
-  const { network } = useNetworkContext();
   const { reportTx } = useTransactionStatus();
   const { enabled: mevEnabled, mevRpcUrl } = useMevProtection();
   // Route all signing through the wallet context so xBull and Freighter both work.
